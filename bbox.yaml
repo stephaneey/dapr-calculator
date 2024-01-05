@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bbox  
+  namespace: rest-calculator 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  namespace: rest-calculator  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:      
+      serviceAccountName: bbox
+      containers:
+      - name: busybox
+        image: governmentpaas/curl-ssl
+        command: ["/bin/sleep", "30d"]
+        imagePullPolicy: IfNotPresent
+---

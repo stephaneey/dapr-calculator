@@ -1,0 +1,255 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dapr-calculator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: addition  
+  namespace: dapr-calculator
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: substraction
+  namespace: dapr-calculator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: division
+  namespace: dapr-calculator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: multiplication
+  namespace: dapr-calculator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: percentage
+  namespace: dapr-calculator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mathfanboy
+  namespace: dapr-calculator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: addition
+    app.kubernetes.io/part-of: calculator
+    app.kubernetes.io/version: v9  
+  name: addition
+  namespace: dapr-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: addition
+  template:
+    metadata:
+      labels:
+        app: addition
+      annotations:
+        dapr.io/app-id: "addition"
+        dapr.io/app-port: "80"
+        dapr.io/enabled: "true"
+        #dapr.io/config: "calculator"
+    spec:
+      containers:      
+      - name: addition
+        image: stephaneey/rcalcadd:dapr
+        imagePullPolicy: Always        
+        resources:
+          requests:
+            cpu: 10m
+      serviceAccountName: addition
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: division
+    app.kubernetes.io/part-of: calculator
+    app.kubernetes.io/version: v9
+  name: division
+  namespace: dapr-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: division
+  template:
+    metadata:
+      labels:
+        app: division
+      annotations:
+        dapr.io/app-id: "division"
+        dapr.io/app-port: "80"
+        dapr.io/enabled: "true"
+    spec:
+      containers:      
+      - name: division
+        image: stephaneey/rcalcdivide:dapr
+        imagePullPolicy: Always         
+        resources:
+          requests:
+            cpu: 10m
+      serviceAccountName: division
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: substraction
+    app.kubernetes.io/part-of: calculator
+    app.kubernetes.io/version: v9
+  name: substraction
+  namespace: dapr-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: substraction
+  template:
+    metadata:
+      labels:
+        app: substraction
+      annotations:
+        dapr.io/app-id: "substraction"
+        dapr.io/app-port: "80"
+        dapr.io/enabled: "true"
+    spec:
+      containers:      
+      - name: substraction
+        image: stephaneey/rcalsubstract:dapr
+        imagePullPolicy: Always               
+        resources:
+          requests:
+            cpu: 10m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: multiplication
+    app.kubernetes.io/part-of: calculator
+    app.kubernetes.io/version: v9
+  name: multiplication
+  namespace: dapr-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multiplication
+  template:
+    metadata:
+      labels:
+        app: multiplication
+      annotations:
+        dapr.io/app-id: "multiplication"
+        dapr.io/app-port: "80"
+        dapr.io/enabled: "true"
+        dapr.io/config: "multiplication"
+    spec:
+      containers:      
+      - name: multiplication
+        image: stephaneey/rcalcmultiply:dapr 
+        imagePullPolicy: Always              
+        resources:
+          requests:
+            cpu: 10m
+      serviceAccountName: multiplication
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: percentage
+    app.kubernetes.io/part-of: calculator
+    app.kubernetes.io/version: v9
+  name: percentage
+  namespace: dapr-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: percentage
+  template:
+    metadata:
+      labels:
+        app: percentage
+      annotations:
+        dapr.io/app-id: "percentage"
+        dapr.io/app-port: "80"
+        dapr.io/enabled: "true"
+    spec:
+      containers:      
+      - name: percentage
+        image: stephaneey/rcalcpercentage:dapr
+        imagePullPolicy: Always                         
+        resources:
+          requests:
+            cpu: 10m
+      serviceAccountName: percentage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  namespace: dapr-calculator  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:      
+      containers:
+      - name: busybox
+        image: governmentpaas/curl-ssl
+        command: ["/bin/sleep", "30d"]
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: mathfanboy
+    app.kubernetes.io/part-of: calculator
+    app.kubernetes.io/version: v9
+  name: mathfanboy
+  namespace: dapr-calculator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mathfanboy
+  template:
+    metadata:
+      labels:
+        app: mathfanboy
+      annotations:
+        dapr.io/app-id: "mathfanboy"
+        dapr.io/enabled: "true"
+        dapr.io/app-port: "80"
+    spec:
+      containers:
+      - name: mathfanboy       
+        image: stephaneey/mathfanboy:dapr
+        imagePullPolicy: Always        
+      serviceAccountName: mathfanboy
+
+
+---

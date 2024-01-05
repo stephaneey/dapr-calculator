@@ -1,0 +1,18 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: multiplication
+  namespace: dapr-calculator
+spec:
+  accessControl:
+    defaultAction: deny        
+    trustDomain: "public"
+    policies:
+    - appId: mathfanboy
+      defaultAction: allow
+      trustDomain: 'public'
+      namespace: "dapr-calculator"
+    - appId: percentage
+      defaultAction: allow
+      trustDomain: 'public'
+      namespace: "dapr-calculator"
