@@ -250,6 +250,4 @@ spec:
         image: stephaneey/mathfanboy:dapr
         imagePullPolicy: Always        
       serviceAccountName: mathfanboy
-
-
 ---

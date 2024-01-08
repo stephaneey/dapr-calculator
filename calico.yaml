@@ -1,0 +1,165 @@
+# Deny-All policy ==> very restrictive. Purpose is to gradually open up.
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: deny-all
+spec:  
+  selector: projectcalico.org/namespace not in  {'kube-system', 'calico-system', 'tigera-operator','gatekeeper-system','kube-public','kube-node-lease','dapr-system'}
+  types:
+  - Ingress
+  - Egress
+  ingress:
+  - action: Deny
+  egress:
+  - action: Deny
+---
+# Allow-DNS policy ==> must open this from scracth, else nothing works.
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  selector: all()
+  types:
+  - Ingress
+  - Egress
+  ingress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  egress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+---
+# Calico NetworkPolicy to allow frontend to talk to backend
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-mathfanboy-to-multiplication
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'mathfanboy'"
+  order: 1
+  types:
+  - Egress  
+  egress:
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'multiplication'"  
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'percentage'"
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'division'"
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'addition'" 
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'substraction'"   
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-percentage-to-multiplication
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'percentage'"
+  order: 1
+  types:
+  - Egress  
+  egress:
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'multiplication'"  
+  - action: Allow
+    destination:
+      selector: "dapr.io/app-id == 'division'"
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-mathfanboy-from-multiplication
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'multiplication'"
+  order: 2
+  types:  
+  - Ingress  
+  ingress:
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'mathfanboy'"
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'percentage'"
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-mathfanboy-from-division
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'division'"
+  order: 2
+  types:  
+  - Ingress  
+  ingress:
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'mathfanboy'"
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'percentage'"
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-mathfanboy-from-percentage
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'percentage'"
+  order: 2
+  types:  
+  - Ingress  
+  ingress:
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'mathfanboy'"
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-mathfanboy-from-addition
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'addition'"
+  order: 2
+  types:  
+  - Ingress  
+  ingress:
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'mathfanboy'"
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-mathfanboy-from-substraction
+  namespace: dapr-calculator
+spec:
+  selector: "dapr.io/app-id == 'substraction'"
+  order: 2
+  types:  
+  - Ingress  
+  ingress:
+  - action: Allow
+    source:
+      selector: "dapr.io/app-id == 'mathfanboy'"
+---

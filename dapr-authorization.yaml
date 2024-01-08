@@ -8,11 +8,11 @@ spec:
     defaultAction: deny        
     trustDomain: "public"
     policies:
-    - appId: mathfanboy
+    - appId: "mathfanboy"
       defaultAction: allow
       trustDomain: 'public'
       namespace: "dapr-calculator"
-    - appId: percentage
+    - appId: "percentage"
       defaultAction: allow
       trustDomain: 'public'
       namespace: "dapr-calculator"
